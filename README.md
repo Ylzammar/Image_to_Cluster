@@ -89,4 +89,39 @@ Cet atelier, **noté sur 20 points**, est évalué sur la base du barème suivan
 - Qualité du Readme (lisibilité, erreur, ...) (4 points)
 - Processus travail (quantité de commits, cohérence globale, interventions externes, ...) (4 points) 
 
+# Atelier DevOps : From Image to Cluster 🚀
 
+Ce projet a pour objectif d'industrialiser le cycle de vie d'une application web (Nginx) en utilisant des pratiques modernes d'Infrastructure as Code (IaC). 
+
+## 🏗️ Architecture et Outils utilisés
+* **GitHub Codespaces** : Environnement de développement cloud.
+* **Packer** : Création automatisée d'une image Docker personnalisée (Nginx + index.html).
+* **K3d (Kubernetes)** : Hébergement du cluster léger pour faire tourner l'application.
+* **Ansible** : Automatisation du déploiement de l'image sur le cluster K3d.
+
+---
+
+## 🚀 Comment déployer la solution (Étape par étape)
+
+### 1. Préparation de l'environnement
+Ouvrez un **Codespace** sur ce repository. L'environnement doit avoir `k3d`, `packer` et `ansible` d'installés.
+
+### 2. Création du cluster Kubernetes
+Le cluster est créé avec un master et deux agents :
+`k3d cluster create lab --servers 1 --agents 2`
+
+### 3. Construction de l'image avec Packer
+Nous utilisons Packer pour intégrer notre page `index.html` dans une image Nginx officielle.
+`packer init build.pkr.hcl`
+`packer build build.pkr.hcl`
+
+### 4. Import de l'image dans le cluster
+Pour que Kubernetes puisse utiliser notre image locale :
+`k3d image import my-nginx:v1 -c lab`
+
+### 5. Déploiement avec Ansible
+Ansible se charge de créer le déploiement Kubernetes, d'exposer le service et de faire le port-forwarding.
+`ansible-playbook deploy_custom.yml`
+
+### 6. Accès à l'application
+Allez dans l'onglet **PORTS** de Codespaces, passez le port **8081** en "Public" et cliquez sur le lien pour visualiser l'application Nginx personnalisée.
