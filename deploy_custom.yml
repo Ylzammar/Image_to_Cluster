@@ -1,0 +1,11 @@
+---
+- name: Deploy Custom Nginx to K3d
+  hosts: localhost
+  tasks:
+    - name: Create Nginx Deployment
+      shell: |
+        kubectl create deployment custom-nginx --image=my-nginx:v1 --dry-run=client -o yaml | kubectl apply -f -
+        kubectl expose deployment custom-nginx --type=NodePort --port=80 --dry-run=client -o yaml | kubectl apply -f -
+
+    - name: Port forward
+      shell: kubectl port-forward svc/custom-nginx 8081:80 >/tmp/custom.log 2>&1 &
